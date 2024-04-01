@@ -37,7 +37,6 @@ const scriptProcessor = audioContext.createScriptProcessor(256, 1, 1);
 
 const freq = 300;
 const phaseIncr = 2 * Math.PI * freq / audioContext.sampleRate;
-const buffer = new Float32Array(256);
 let phase = 0;
 
 scriptProcessor.addEventListener('audioprocess', e => {
@@ -48,7 +47,7 @@ scriptProcessor.addEventListener('audioprocess', e => {
   const input = e.inputBuffer.getChannelData(0);
   const output = e.outputBuffer.getChannelData(0);
 
-  for (let i = 0; i < buffer.length; i++) {
+  for (let i = 0; i < input.length; i++) {
     const v = Math.sin(phase);
     phase += phaseIncr;
 
@@ -80,7 +79,7 @@ if (OFFLINE_TEST) {
     }
   }
 
-  console.log('> non zero sample sample found at', found);
+  console.log('> non zero sample found at', found);
 
   // playback
   const src = onlineAudioContext.createBufferSource();
