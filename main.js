@@ -41,7 +41,7 @@ const buffer = new Float32Array(256);
 let phase = 0;
 
 scriptProcessor.addEventListener('audioprocess', e => {
-  console.log('audioprocess');
+  console.log('audioprocess called');
   // do some heavy work
   fib(1000000);
 
@@ -64,11 +64,24 @@ sine.connect(scriptProcessor);
 sine.start();
 
 if (OFFLINE_TEST) {
-  console.time('time to compute');
+  console.time('> offline context rendering duration');
   const output = await audioContext.startRendering();
-  console.timeEnd('time to compute');
+  console.timeEnd('> offline context rendering duration');
 
   console.log(output.getChannelData(0));
+
+  // find first non zero index
+  let found = -1;
+  const data = output.getChannelData(0);
+  for (let i = 0; i < data.length; i++) {
+    if (data[i] !== 0) {
+      found = i;
+      break;
+    }
+  }
+
+  console.log('> non zero sample sample found at', found);
+
   // playback
   const src = onlineAudioContext.createBufferSource();
   src.buffer = output;
